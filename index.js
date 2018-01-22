@@ -11,5 +11,9 @@ app.listen(PORT, () => console.log(`Listening on ${PORT}`))
 
 
 app.get('/nightbot-pokemon/:channel/:user/:userLevel/:count/:query', function (req, res) {
-  res.send(" Hello World " + req.params);
+  res.send(" Hello World " + JSON.stringify(req.params));
+})
+
+app.get('/nightbot-pokemon/:channel/:user/:userLevel/:count', function (req, res) {
+  res.send(" Hello World " + JSON.stringify(req.params));
 })
