@@ -55,13 +55,21 @@ app.get('/dex/:q', function (req, res) {
     var rnd = [
       `Filmov is not a Pokemon, but you can catch him everyday at 6pm CST!`,
       'Filmov is not a Pokemon but he may turn into a Pokemon if you keep using this command',
-      'Filmov is evolves to...',
+      'Filmov evolves to...',
       'Filmov is a digimon',
       'Filmov is not a Pokemon but he lives in a pokeball',
       'Filmov is not a Pokemon but he\'s on Team Rocket',
       'Filmov is a rare kind of Pokemon usually found on http://twitch.com/filmov',
       'Filmov?! never heard of this Pokemon!',
       'Filmov is not on pokedex database, is it?'
+    ];
+    res.send('📟 POKEDEX: ' + rnd.random());
+    return;
+  }
+
+  if (n.match(/victor(npb)?/)) {
+    var rnd = [
+      '📟 POKEDEX: Pokedex command is brought to you by @victornpb ', 
     ];
     res.send('📟 POKEDEX: ' + rnd.random());
     return;
@@ -75,7 +83,7 @@ app.get('/dex/:q', function (req, res) {
     res.send(`📟 POKEDEX: #${p.id} ${p.ename} ✅ TYPE: ${p.type} | ${listProps(p.base)}`);
   }
   else { 
-    res.send('Not found sorry');
+    res.send(`📟 POKEDEX: ${n} is not a pokemon on the database!`);
   }
  
 });
@@ -109,3 +117,10 @@ function findSkill(id) {
 function listProps(obj) {
   return _.map(obj, (v,k) => `${k} ${v}`).join(' ')
 }
+
+
+// var regulars = [
+//   'mrglowtm': [
+//     'This is a kind of pokemon whos only form of food is HotPockets'
+//   ]
+// ];
