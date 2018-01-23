@@ -1,8 +1,12 @@
+
+const _ = require('underscore');
 const express = require('express')
 const path = require('path')
 const PORT = process.env.PORT || 5000
 
-const oakdexPokedex = require('oakdex-pokedex');
+// const oakdexPokedex = require('oakdex-pokedex');
+
+
 
 const app = express();
 app.use(express.static(path.join(__dirname, 'public')))
@@ -28,11 +32,56 @@ app.get('/nightbot-pokemon/:channel/:user/:userLevel/:count', function (req, res
 
 // })
 
-app.get('/dex/:query', function (req, res) {
 
-  oakdexPokedex.findPokemon(req.params.query, function (p) {
-    console.log(p.names); // Eeevee 
-  
-    res.send(JSON.stringify(p));
-  });
-})
+const db = {
+  pokemons: require('./db/pokedb'),
+  items: require('./db/items'),
+  skills: require('./db/skills'),
+  types: require('./db/types'),
+}
+
+app.get('/dex/:q', function (req, res) {
+  var n = String(req.params.q).trim().toLowerCase();
+  console.log('find', n)
+
+  var pokemon = findPokemon(n);
+  if (pokemon) {
+    // res.send(JSON.stringify(pokemon));
+    console.log(pokemon);
+    let p = pokemon;
+    res.send(`POKEDEX #${p.id} ${p.ename} | Type: ${p.type} | Base: ${listProps(p.base)}`);
+  }
+  else { 
+    res.send('Not found sorry');
+  }
+ 
+});
+
+function findPokemon(name) {
+  for (let i = 0; i < db.pokemons.length; i++) {
+    let item = db.pokemons[i];
+    if (item.ename.toLowerCase() === name || item.jname.toLowerCase() === name) {
+      item.type = item.type.map(findType);
+      return item;
+    }
+  }
+}
+
+function findType(t) {
+  for (let i = 0; i < db.types.length; i++) {
+    let item = db.types[i];
+    if (item.ename === t || item.cname === t || item.jname === t) return item.ename; 
+  }
+  return "?";
+}
+
+function findSkill(id) {
+  for (let i = 0; i < db.skills.length; i++) {
+    let item = db.skills[i];
+    if (item.cname === id || item.ename === id || item.jname === id) return item;
+  }
+}
+
+function listProps(obj) {
+  return _.map(obj, (v,k) => `${k}: ${v}`).join('\n')
+}
