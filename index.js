@@ -66,7 +66,7 @@ function findPokemon(name) {
   name = String(name).toLowerCase();
   for (let i = 0; i < db.pokemons.length; i++) {
     let item = db.pokemons[i];
-    if (String(item.ename).toLowerCase() === name || String(item.jname).toLowerCase() === name || String(item.cname).toLowerCase() === name) {
+    if (Number(item.id) == name || String(item.ename).toLowerCase() === name || String(item.jname).toLowerCase() === name || String(item.cname).toLowerCase() === name) {
       item.type = item.type.map(findType);
       return item;
     }
