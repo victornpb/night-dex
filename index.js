@@ -51,6 +51,11 @@ app.get('/dex/:q', function (req, res) {
   var n = String(req.params.q).trim().toLowerCase();
   console.log('find', n)
 
+  const reg = regulars[n];
+  if (reg) {
+    return res.send('📟 POKEDEX: ' + reg.random());
+  }
+
   if (n === 'filmov') {
     var rnd = [
       `Filmov is not a Pokemon, but you can catch him everyday at 6pm CST!`,
@@ -61,7 +66,7 @@ app.get('/dex/:q', function (req, res) {
       'Filmov is not a Pokemon but he\'s on Team Rocket',
       'Filmov is a rare kind of Pokemon usually found on http://twitch.com/filmov',
       'Filmov?! never heard of this Pokemon!',
-      'Filmov is not on pokedex database, is it?'
+      'Filmov is not on pokedex database, is it?',
     ];
     res.send('📟 POKEDEX: ' + rnd.random());
     return;
@@ -119,8 +124,11 @@ function listProps(obj) {
 }
 
 
-// var regulars = [
-//   'mrglowtm': [
-//     'This is a kind of pokemon whos only form of food is HotPockets'
-//   ]
-// ];
+var regulars = {
+  'mrglowtm': [
+    'This is a kind of pokemon whos only form of food is HotPockets',
+  ],
+  'C00lFireSG': [
+    '',
+  ]
+};
