@@ -20,5 +20,5 @@ app.get('/nightbot-pokemon/:channel/:user/:userLevel/:count', function (req, res
 
 
 app.get('/dex', function (req, res) {
-  res.send(JSON.stringify(req.param));
+  res.send(JSON.stringify(req.query));
 })
