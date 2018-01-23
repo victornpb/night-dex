@@ -40,6 +40,11 @@ const db = {
   types: require('./db/types'),
 }
 
+
+app.get('/dex', function (req, res) {
+  res.send('You should type a pokemon name!');
+});
+
 app.get('/dex/:q', function (req, res) {
   var n = String(req.params.q).trim().toLowerCase();
   console.log('find', n)
@@ -58,9 +63,10 @@ app.get('/dex/:q', function (req, res) {
 });
 
 function findPokemon(name) {
+  name = String(name).toLowerCase();
   for (let i = 0; i < db.pokemons.length; i++) {
     let item = db.pokemons[i];
-    if (item.ename.toLowerCase() === name || item.jname.toLowerCase() === name) {
+    if (String(item.ename).toLowerCase() === name || String(item.jname).toLowerCase() === name || String(item.cname).toLowerCase() === name) {
       item.type = item.type.map(findType);
       return item;
     }
