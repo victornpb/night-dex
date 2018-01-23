@@ -54,7 +54,7 @@ app.get('/dex/:q', function (req, res) {
     // res.send(JSON.stringify(pokemon));
     console.log(pokemon);
     let p = pokemon;
-    res.send(`POKEDEX #${p.id} ${p.ename} | Type: ${p.type} | Base: ${listProps(p.base)}`);
+    res.send(`📟 POKEDEX: #${p.id} ${p.ename} - (${p.jname}) ✅ TYPE:${p.type} | ${listProps(p.base)}`);
   }
   else { 
     res.send('Not found sorry');
