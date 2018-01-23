@@ -17,3 +17,8 @@ app.get('/nightbot-pokemon/:channel/:user/:userLevel/:count/:query', function (r
 app.get('/nightbot-pokemon/:channel/:user/:userLevel/:count', function (req, res) {
   res.send(`⚡💢 @${req.param.user} found a wild Bulbasaur❗️\n🔴 https://pokemondb.net/pokedex/bulbasaur`);
 })
+
+
+app.get('/dex', function (req, res) {
+  res.send(JSON.stringify(req.param));
+})
