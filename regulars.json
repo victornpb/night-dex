@@ -1,4 +1,16 @@
 {
+    "Filmov": [
+        "Filmov is not a Pokemon, but you can catch him everyday at 6pm CST!",
+        "Filmov is not a Pokemon but he may turn into a Pokemon if you keep using this command",
+        "Filmov evolves to...",
+        "Filmov is a digimon",
+        "Filmov is not a Pokemon but he lives in a pokeball",
+        "Filmov is not a Pokemon but he's on Team Rocket",
+        "Filmov is a rare kind of Pokemon usually found on http://twitch.com/filmov",
+        "Filmov?! never heard of this Pokemon!",
+        "Filmov is not on pokedex database, is it?",
+        "Even tho it seems this pokemon is not 12."
+    ],
     "mrglowtm": [
         "This is a kind of pokemon whos only form of food is HotPockets",
         "Don't leave any ramen near this pokemon, or it will eat everything.",
@@ -12,26 +24,25 @@
         "This is a pokemon with strong feelings about murder"
     ],
     "Fantasy_Owl": [
-        "Fantasy_Owl evolves into HootHoot!",
-        "This is a very wise kind of pokemon who can tell stories about people dying in very unexpected ways..."
+        "Fantasy_Owl evolves into Shiny HootHoot!",
+        "This is a very wise kind of pokemon who can tell stories about people dying in unexpected ways...",
+        "Did you mean: !dex HootHoot",
+        "Fantasy Owl is a secret evolution of Noctowl",
+        "Fantasy Owl is a pokemon which likes stinky feet",
+        "This pokemon secretely kill people in a book",
+        "This pokemon might just be Gone!"
     ],
     "SupuhSel": [
         "This pokemon is very fast, sometimes it can reach speeds of 80 miles per hour!",
         "This pokemon is very kind and generous",
         "This pokemon sometimes needs to be translated to be understood by its own peers"
     ],
-    "Filmov": [
-        "Filmov is not a Pokemon, but you can catch him everyday at 6pm CST!",
-        "Filmov is not a Pokemon but he may turn into a Pokemon if you keep using this command",
-        "Filmov evolves to...",
-        "Filmov is a digimon",
-        "Filmov is not a Pokemon but he lives in a pokeball",
-        "Filmov is not a Pokemon but he's on Team Rocket",
-        "Filmov is a rare kind of Pokemon usually found on http://twitch.com/filmov",
-        "Filmov?! never heard of this Pokemon!",
-        "Filmov is not on pokedex database, is it?"
-    ],
-    "version":[
-        "1.3.0"
+    "jupiternova18":[
+        "Jupiter favorite planet is Mars",
+        "Do you know that you can watch Fairy Tail on Jupiter?",
+        "Is Jupiter a pokemon or a planet? I'm not sure",
+        "Do they have any pokemons in Jupiter?",
+        "Pokedex cannot find any record of pokemons in Jupiter",
+        "Pokemon Jupiter is a Pokemon Ruby hack which has been developed since July of 2008."
     ]
 }
