@@ -33,7 +33,7 @@ app.get('/dex', function (req, res) {
     // out += `Instruction: ${unifont(CMD + ' help', 'sansbold')}. `;
     out += unifont(`🎲🎲 RANDOM 🎲🎲`, 'boldscript');
     let p = dex.getRandom();
-    out += printPokemon(p);
+    out += printPokemon(p, MAXLEN-PREFIX.length-out.length);
 
     out = limit(PREFIX + out, MAXLEN);
 
@@ -69,7 +69,7 @@ app.get('/dex/:q', function (req, res) {
 
         let p = dex.find(q)[0];
         if (p) {
-            out = printPokemon(p);
+            out = printPokemon(p, MAXLEN-PREFIX.length);
         } else { //not found
             out = unifont(`🕵 This Pokemon is not on the database!`, 'sansbold') + ` (${q})`;
             let suggestions = dex.suggestions(q);
@@ -106,7 +106,7 @@ function limit(str, max) {
 }
 
 
-function printPokemon(p) {
+function printPokemon(p, maxlen) {
 
     const ABREV = {
         "hp": "HP",
@@ -118,11 +118,13 @@ function printPokemon(p) {
     };
 
     const name = `【#${p.national_id} ${p.names.en.toUpperCase()}】`;
-    const type = unifont('🔷TYPE:', 'bold') + p.types.join(' ');
-    const abilities = unifont('🎓ABILITIES:', 'bold') + p.abilities.map(a => a.name + (p.hidden ? '*' : '')).join(', ');
-    const base_stats = unifont('📊 BASE:', 'bold') + Object.keys(p.base_stats).map(a => `${unifont(ABREV[a], 'normal')}${p.base_stats[a]}`).join('|');
-    const ev_yield = unifont('🔸EVYIELD:', 'bold') + Object.keys(p.ev_yield).map(a => `${unifont(ABREV[a], 'normal')}${p.ev_yield[a]}`).join('|');
-    const link = `pokemondb.net/pokedex/${p.names.en}`;
+    const type = unifont('TYPE:', 'sansbold') + p.types.join('/');
+    const abilities = unifont('ABILITIES:', 'sansbold') + p.abilities.map(a => a.name + (p.hidden ? '*' : '')).join(', ');
+    const base_stats = unifont('BASE:', 'sansbold') + Object.keys(p.base_stats).map(a => `${unifont(ABREV[a], 'normal')}${p.base_stats[a]}`).join('|');
+    const ev_yield = unifont('EVYIELD:', 'sansbold') + Object.keys(p.ev_yield).map(a => `${unifont(ABREV[a], 'normal')}${p.ev_yield[a]}`).join('|');
+    // const link = `pokemondb.net/pokedex/${p.names.en.toLowerCase()}`;
+    // const link = `pokemon.wikia.com/wiki/${p.names.en.toLowerCase()}`;
+    const link = `bulbapedia.bulbagarden.net/wiki/${p.names.en.toLowerCase()}`;
     const dexGen = Object.keys(p.pokedex_entries).random();
     const quote = unifont(`🗣‟${p.pokedex_entries[dexGen].en}„`, 'sansitalic');
 
@@ -137,9 +139,11 @@ function printPokemon(p) {
     ];
 
     //limit the quote length
-    const quoteIndex = 4;
-    var overflow = PREFIX.length + out.join(' ').length - MAXLEN;
-    if (overflow > 0) out[quoteIndex] = limit(out[quoteIndex], out[quoteIndex].length - overflow);
+    if (maxlen) {
+        const quoteIndex = 4;
+        var overflow = out.join(' ').length - maxlen;
+        if (overflow > 0) out[quoteIndex] = limit(out[quoteIndex], out[quoteIndex].length - overflow);
+    }
 
 
     return out.join(' ');
