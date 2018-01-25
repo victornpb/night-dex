@@ -24,11 +24,20 @@ app.listen(PORT, () => console.log(`Listening on ${PORT}`));
 // app.set('view engine', 'ejs')
 // app.get('/', (req, res) => res.render('pages/index'))
 
-
+const CMD = '!dex';
 const PREFIX = '📟 🄳🄴🅇 ';
 
 app.get('/dex', function (req, res) {
-    res.send(PREFIX+'You should type a pokemon name!');
+
+    let out = `Instruction: ${CMD} help. `;
+    let p = dex.getRandom();
+    out += printPokemon(p);
+    res.send(PREFIX+out);
+});
+
+app.get('/dex/help', function (req, res) {
+    let out = `Type ${CMD} POKEMON or NUMBER. Type ${CMD} to get a random Pokemon.`;
+    res.send(PREFIX + out);
 });
 
 app.get('/dex/:q', function (req, res) {
@@ -46,7 +55,8 @@ app.get('/dex/:q', function (req, res) {
             out = printPokemon(p);
         }
         else {
-            out = 'Not found: ' + q;
+            let suggestions = dex.suggestions(q);
+            out = `🕵 This Pokémon is not on the database! ` + (suggestions.length ? `🔮 But you can try ${suggestions.length > 1 ?'one of those':'that one'}! ` + suggestions.map(p => `➤ ${CMD} ${p.names.en}`).join(' '):'');
         }
     }
 
@@ -55,6 +65,7 @@ app.get('/dex/:q', function (req, res) {
     res.send(limit(PREFIX + out));
 
 });
+
 
 function limit(str) {
     if (str.length >= 400) {
