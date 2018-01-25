@@ -80,7 +80,7 @@ app.get('/dex/:q', function (req, res) {
     res.set({
         'content-type': 'text/plain; charset=utf-8'
     });
-    res.send(limit(out.indexOf('/me')===0?'/me'+PREFIX+out.substring(3) : PREFIX + out));
+    res.send(limit(out.indexOf('/me')===0?'/me '+PREFIX+out.substring(3) : PREFIX + out));
 
 });
 
