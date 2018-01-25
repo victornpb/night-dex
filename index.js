@@ -10,7 +10,6 @@ const unifont = require('./unifont');
 const eastereggs = require('./eastereggs');
 
 
-
 Array.prototype.random = function () {
     return this[Math.floor((Math.random() * this.length))];
 };
@@ -18,15 +17,16 @@ Array.prototype.random = function () {
 const app = express();
 app.listen(PORT, () => console.log(`Listening on ${PORT}`));
 
-const dex = new Dex(); //instance
-
 // app.use(express.static(path.join(__dirname, 'public')))
 // app.set('views', path.join(__dirname, 'views'))
 // app.set('view engine', 'ejs')
 // app.get('/', (req, res) => res.render('pages/index'))
 
+const dex = new Dex(); //instance
+
 const CMD = '!dex';
 const PREFIX = unifont('📟 DEX ', 'squaredneg');
+const MAXLEN = 400;
 
 app.get('/dex', function (req, res) {
     let out = "";
@@ -35,10 +35,12 @@ app.get('/dex', function (req, res) {
     let p = dex.getRandom();
     out += printPokemon(p);
 
+    out = limit(PREFIX + out, MAXLEN);
+
     res.set({
         'content-type': 'text/plain; charset=utf-8'
     });
-    res.send(PREFIX + out);
+    res.send(out);
 });
 
 app.get('/dex/help', function (req, res) {
@@ -48,10 +50,12 @@ app.get('/dex/help', function (req, res) {
     out += ` ➤ ${unifont(CMD + ' gengar', 'sansbold')} or ${unifont(CMD + ' 94', 'sansbold')} to see the Pokedex info about Gengar.`;
     out += ` ➤ ${unifont(CMD + ' about', 'sansbold')} to see about this command.`;
 
+    out = lmit(PREFIX + out, MAXLEN);
+
     res.set({
         'content-type': 'text/plain; charset=utf-8'
     });
-    res.send(PREFIX + out);
+    res.send(out);
 });
 
 app.get('/dex/:q', function (req, res) {
@@ -76,18 +80,27 @@ app.get('/dex/:q', function (req, res) {
         }
     }
 
+    if (out.indexOf('/me') === 0) {
+        out = '/me ' + PREFIX + out.substring(3);
+    }
+    else {
+        out = PREFIX + out;
+    }
+        
+    out = limit(out, MAXLEN);
 
     res.set({
         'content-type': 'text/plain; charset=utf-8'
     });
-    res.send(limit(out.indexOf('/me')===0?'/me '+PREFIX+out.substring(3) : PREFIX + out));
+    res.send(out);
 
 });
 
 
-function limit(str) {
-    if (str.length >= 400) {
-        return str.substring(0, 400 - 1) + '…';
+function limit(str, max) {
+    const ellipisis = '…'
+    if (str.length > max) {
+        return str.substring(0, max - ellipisis.length) + ellipisis;
     }
     return str;
 }
@@ -119,9 +132,15 @@ function printPokemon(p) {
         abilities,
         base_stats,
         // ev_yield,
-        // link,
-        quote,
-    ].join(' ');
+        quote, // index: 4 (update the quoteIndex variable)
+        link,
+    ];
 
-    return out;
+    //limit the quote length
+    const quoteIndex = 4;
+    var overflow = PREFIX.length + out.join(' ').length - MAXLEN;
+    if (overflow > 0) out[quoteIndex] = limit(out[quoteIndex], out[quoteIndex].length - overflow);
+
+
+    return out.join(' ');
 }
