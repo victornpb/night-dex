@@ -32,16 +32,24 @@ app.get('/dex', function (req, res) {
 });
 
 app.get('/dex/:q', function (req, res) {
+    let out;
+    var q = String(req.params.q).trim();
     
-    var q = String(req.params.q);
+    let ee = eastereggs(q);
+    if (ee) {
+        out = ee;
+    }
+    else { 
 
-    let p = dex.find(q)[0];
-    if (p) {
-        out = printPokemon(p);
+        let p = dex.find(q)[0];
+        if (p) {
+            out = printPokemon(p);
+        }
+        else {
+            out = 'Not found: ' + q;
+        }
     }
-    else {
-        out = 'Not found: ' + q;
-    }
+
 
     res.set({ 'content-type': 'text/plain; charset=utf-8' })
     res.send(limit(PREFIX + out));
@@ -72,7 +80,7 @@ function printPokemon(p) {
     const abilities = unifont('🎓ABILITIES:','bold') + p.abilities.map(a => a.name + (p.hidden ? '*' : '')).join(', ');
     const base_stats = unifont('📊 BASE:', 'bold') + Object.keys(p.base_stats).map(a => `${unifont(ABREV[a], 'normal')}${p.base_stats[a]}`).join('|');
     const ev_yield = unifont('🔸EVYIELD:', 'bold') + Object.keys(p.ev_yield).map(a => `${unifont(ABREV[a], 'normal')}${p.ev_yield[a]}`).join('|');
-
+    const link = `pokemondb.net/pokedex/${p.names.en}`;
     const dexGen = Object.keys(p.pokedex_entries).random();
     const quote = unifont(`🗣‟${p.pokedex_entries[dexGen].en}„`, 'sansitalic');
 
@@ -81,9 +89,11 @@ function printPokemon(p) {
         type,
         abilities,
         base_stats,
-        ev_yield,
+        // ev_yield,
+        // link,
         quote,
     ].join(' ');
+
 
     return out;
 }
