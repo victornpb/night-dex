@@ -49,8 +49,8 @@ app.get('/dex/:q', function (req, res) {
 });
 
 function limit(str) {
-    if (str.length >= 399) {
-        return str.substring(0, 399-3)+'...';
+    if (str.length >= 400) {
+        return str.substring(0, 400-1)+'…';
     }
     return str;
 }
