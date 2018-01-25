@@ -1,7 +1,8 @@
 const _ = require('underscore');
-const express = require('express')
-const path = require('path')
-const PORT = process.env.PORT || 5000
+const express = require('express');
+const path = require('path');
+
+const PORT = process.env.PORT || 5000;
 
 // 
 const Dex = require('./dex');
@@ -31,36 +32,47 @@ app.get('/dex', function (req, res) {
 });
 
 app.get('/dex/:q', function (req, res) {
+    
     var q = String(req.params.q);
 
     let p = dex.find(q)[0];
     if (p) {
-        res.send(PREFIX+printPokemon(p));
+        out = printPokemon(p);
     }
     else {
-        res.send(PREFIX+'Not found: '+q);
+        out = 'Not found: ' + q;
     }
 
+    res.set({ 'content-type': 'text/plain; charset=utf-8' })
+    res.send(limit(PREFIX + out));
+
 });
+
+function limit(str) {
+    if (str.length >= 399) {
+        return str.substring(0, 399-3)+'...';
+    }
+    return str;
+}
 
 
 function printPokemon(p) {
 
     const ABREV = {
         "hp": "HP",
-        "atk": "Attack",
-        "def": "Defense",
+        "atk": "ATK",
+        "def": "Def",
         "sp_atk": "SpAtk",
         "sp_def": "SpDef",
-        "speed": "Speed",
+        "speed": "SPD",
     };
 
     const id = `#${p.national_id}`;
     const name = `【${p.names.en.toUpperCase()}】`;
-    const type = '➤ TYPE: ' + p.types.join(' ');
-    const abilities = '⎜🗡 ABILITIES: ' + p.abilities.map(a => a.name + (p.hidden ? '*' : '')).join(' ');
-    const base_stats = '⎜📊  BASE: ' + Object.keys(p.base_stats).map(a => `${unifont(ABREV[a], 'sans')}${p.base_stats[a]}`).join(' ');
-    const ev_yield = '⎜🔸 EV-YIELD: ' + Object.keys(p.ev_yield).map(a => `${unifont(ABREV[a], 'sans')}${p.ev_yield[a]}`).join(' ');
+    const type = unifont('➤ TYPE: ', 'bold') + p.types.join(' ');
+    const abilities = unifont('⎜🗡 ABILITIES: ','bold') + p.abilities.map(a => a.name + (p.hidden ? '*' : '')).join(' ');
+    const base_stats = unifont('⎜📊  BASE: ', 'bold') + Object.keys(p.base_stats).map(a => `${unifont(ABREV[a], 'normal')}${p.base_stats[a]}`).join(' ');
+    const ev_yield = unifont('⎜🔸 EV-YIELD: ', 'bold') + Object.keys(p.ev_yield).map(a => `${unifont(ABREV[a], 'normal')}${p.ev_yield[a]}`).join(' ');
 
     const dexGen = Object.keys(p.pokedex_entries).random();
     const quote = `⎜ 🗣 ❝${unifont(p.pokedex_entries[dexGen].en, 'italic')}❞`;
