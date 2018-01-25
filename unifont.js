@@ -22,10 +22,11 @@ function unifont(str, style) {
     
     let font = styles[style];
     if (!font) throw new Error(`${style} is not a valid style! choose ${Object.keys(styles)}`);
-
+    
     var s = "";
     for (let i = 0; i < str.length; i++) {
-        s += font[str.charCodeAt(i) - 32] || str;
+        let c = font[str.charCodeAt(i) - 32];
+        s += c !== undefined ? c : str.charAt(i);
     }
     return s;
 }
