@@ -15,7 +15,7 @@ function testRegulars(str) {
         return k.toLowerCase() === q ? k : null;
     });
 
-    if (person) return `【@${person}】${regulars[person].random()}`;
+    if (person) return `【 @ ${person} 】🎁 ${regulars[person].random()}`;
 }
 
 
