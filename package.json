@@ -1,7 +1,7 @@
 {
-  "name": "node-js-getting-started",
+  "name": "victornightbot-dex",
   "version": "0.3.0",
-  "description": "A sample Node.js app using Express 4",
+  "description": "A Pokedex command for nightbot",
   "engines": {
     "node": "8.9.1"
   },

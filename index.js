@@ -1,134 +1,79 @@
-
 const _ = require('underscore');
 const express = require('express')
 const path = require('path')
 const PORT = process.env.PORT || 5000
 
-// const oakdexPokedex = require('oakdex-pokedex');
+// 
+const Dex = require('./dex');
+const unifont = require('./unifont');
+const eastereggs = require('./eastereggs');
+
+const dex = new Dex(); //instance
 
 Array.prototype.random = function () {
-  return this[Math.floor((Math.random() * this.length))];
+    return this[Math.floor((Math.random() * this.length))];
 }
 
 const app = express();
-app.use(express.static(path.join(__dirname, 'public')))
-app.set('views', path.join(__dirname, 'views'))
-app.set('view engine', 'ejs')
-app.get('/', (req, res) => res.render('pages/index'))
-app.listen(PORT, () => console.log(`Listening on ${PORT}`))
+app.listen(PORT, () => console.log(`Listening on ${PORT}`));
 
 
-app.get('/nightbot-pokemon/:channel/:user/:userLevel/:count/:query', function (req, res) {
-  res.send(" Hello World " + JSON.stringify(req.params));
-})
-
-app.get('/nightbot-pokemon/:channel/:user/:userLevel/:count', function (req, res) {
-  res.send(`⚡💢 @${req.params.user} found a wild Bulbasaur❗️\n🔴 https://pokemondb.net/pokedex/bulbasaur`);
-})
+// app.use(express.static(path.join(__dirname, 'public')))
+// app.set('views', path.join(__dirname, 'views'))
+// app.set('view engine', 'ejs')
+// app.get('/', (req, res) => res.render('pages/index'))
 
 
-// app.get('/dex', function (req, res) {
-//   res.send(JSON.stringify(req.query));
-
-
-
-// })
-
-
-const db = {
-  pokemons: require('./db/pokedb'),
-  items: require('./db/items'),
-  skills: require('./db/skills'),
-  types: require('./db/types'),
-}
-
+const PREFIX = '📟 🄿🄾🄺🄴🄳🄴🅇 ';
 
 app.get('/dex', function (req, res) {
-  res.send('📟 POKEDEX: You should type a pokemon name!');
+    res.send(PREFIX+'You should type a pokemon name!');
 });
 
 app.get('/dex/:q', function (req, res) {
-  var n = String(req.params.q).trim().toLowerCase();
-  console.log('find', n)
+    var q = String(req.params.q);
 
-  const reg = regulars[n];
-  if (reg) {
-    return res.send('📟 POKEDEX: ' + reg.random());
-  }
+    let p = dex.find(q)[0];
+    if (p) {
+        res.send(PREFIX+printPokemon(p));
+    }
+    else {
+        res.send(PREFIX+'Not found: '+q);
+    }
 
-  if (n === 'filmov') {
-    var rnd = [
-      `Filmov is not a Pokemon, but you can catch him everyday at 6pm CST!`,
-      'Filmov is not a Pokemon but he may turn into a Pokemon if you keep using this command',
-      'Filmov evolves to...',
-      'Filmov is a digimon',
-      'Filmov is not a Pokemon but he lives in a pokeball',
-      'Filmov is not a Pokemon but he\'s on Team Rocket',
-      'Filmov is a rare kind of Pokemon usually found on http://twitch.com/filmov',
-      'Filmov?! never heard of this Pokemon!',
-      'Filmov is not on pokedex database, is it?',
-    ];
-    res.send('📟 POKEDEX: ' + rnd.random());
-    return;
-  }
-
-  if (n.match(/victor(npb)?/)) {
-    var rnd = [
-      '📟 POKEDEX: Pokedex command is brought to you by @victornpb ', 
-    ];
-    res.send('📟 POKEDEX: ' + rnd.random());
-    return;
-  }
-
-  var pokemon = findPokemon(n);
-  if (pokemon) {
-    // res.send(JSON.stringify(pokemon));
-    console.log(pokemon);
-    let p = pokemon;
-    res.send(`📟 POKEDEX: #${p.id} ${p.ename} ✅ TYPE: ${p.type} | ${listProps(p.base)}`);
-  }
-  else { 
-    res.send(`📟 POKEDEX: ${n} is not a pokemon on the database!`);
-  }
- 
 });
 
-function findPokemon(name) {
-  name = String(name).toLowerCase();
-  for (let i = 0; i < db.pokemons.length; i++) {
-    let item = db.pokemons[i];
-    if (Number(item.id) == name || String(item.ename).toLowerCase() === name || String(item.jname).toLowerCase() === name || String(item.cname).toLowerCase() === name) {
-      item.type = item.type.map(findType);
-      return item;
-    }
-  }
+
+function printPokemon(p) {
+
+    const ABREV = {
+        "hp": "HP",
+        "atk": "Attack",
+        "def": "Defense",
+        "sp_atk": "SpAtk",
+        "sp_def": "SpDef",
+        "speed": "Speed",
+    };
+
+    const id = `#${p.national_id}`;
+    const name = `【${p.names.en.toUpperCase()}】`;
+    const type = '➤ TYPE: ' + p.types.join(' ');
+    const abilities = '⎜🗡 ABILITIES: ' + p.abilities.map(a => a.name + (p.hidden ? '*' : '')).join(' ');
+    const base_stats = '⎜📊  BASE: ' + Object.keys(p.base_stats).map(a => `${unifont(ABREV[a], 'sans')}${p.base_stats[a]}`).join(' ');
+    const ev_yield = '⎜🔸 EV-YIELD: ' + Object.keys(p.ev_yield).map(a => `${unifont(ABREV[a], 'sans')}${p.ev_yield[a]}`).join(' ');
+
+    const dexGen = Object.keys(p.pokedex_entries).random();
+    const quote = `⎜ 🗣 ❝${unifont(p.pokedex_entries[dexGen].en, 'italic')}❞`;
+
+    const out = [
+        id,
+        name,
+        type,
+        abilities,
+        base_stats,
+        ev_yield,
+        quote,
+    ].join(' ');
+
+    return out;
 }
-
-function findType(t) {
-  for (let i = 0; i < db.types.length; i++) {
-    let item = db.types[i];
-    if (item.ename === t || item.cname === t || item.jname === t) return item.ename; 
-  }
-  return "?";
-}
-
-function findSkill(id) {
-  for (let i = 0; i < db.skills.length; i++) {
-    let item = db.skills[i];
-    if (item.cname === id || item.ename === id || item.jname === id) return item;
-  }
-}
-
-function listProps(obj) {
-  return _.map(obj, (v,k) => `${k} ${v}`).join(' ')
-}
-
-
-var regulars = {
-  'mrglowtm': [
-    'This is a kind of pokemon whos only form of food is HotPockets',
-  ],
-  'C00lFireSG': [
-    '',
-  ]
-};
