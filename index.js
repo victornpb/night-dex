@@ -31,7 +31,7 @@ const MAXLEN = 400;
 app.get('/dex', function (req, res) {
     let out = "";
     // out += `Instruction: ${unifont(CMD + ' help', 'sansbold')}. `;
-    out += unifont(`🎲🎲 RANDOM 🎲🎲`, 'boldscript');
+    out += unifont(`🎲 RANDOM 🎲`, 'boldscript');
     let p = dex.getRandom();
     out += printPokemon(p, MAXLEN-PREFIX.length-out.length);
 
@@ -59,13 +59,50 @@ app.get('/dex/help', function (req, res) {
 });
 
 app.get('/dex/:q', function (req, res) {
-    let out;
+    let out = '';
     var q = String(req.params.q).trim();
+
+    const QUERY_BY_TYPE = /^(types?) (.*)/;
+    const QUERY_BY_ABILITY = /^(ability|abilities?) (.*)/;
+    const QUERY_EVOLUTION = /^(evolutions?) (.*)/;
 
     let ee = eastereggs(q);
     if (ee) {
         out = ee;
-    } else {
+    }
+    else if (QUERY_BY_TYPE.test(q)) {
+        let t = QUERY_BY_TYPE.exec(q)[2];
+
+        out += `Searching for pokemons with types that match "${t}": `;
+        let results = dex.findByType(t);
+        if (results.length)
+            out += results.map(p => `#${p.national_id} ${p.names.en}`);
+        else
+            out += `No results!`;    
+    }
+    else if (QUERY_BY_ABILITY.test(q)) {
+        let t = QUERY_BY_ABILITY.exec(q)[2];
+
+        out += `Searching for pokemons with abilities that match "${t}": `;
+        let results = dex.findByAbility(t);
+        if (results.length)
+            out += results.map(p => `#${p.national_id} ${p.names.en}`);
+        else
+            out += `No results!`;    
+    }
+    else if (QUERY_EVOLUTION.test(q)) {
+        let t = QUERY_EVOLUTION.exec(q)[2];
+
+        // out += ` "${t}": `;
+        let p = dex.find(t)[0];
+        if (p) {
+            out += p.evolutions.map(p => `#${p.national_id} ${p.names.en}`);
+            
+        }
+        else
+            out += `No results!`;    
+    }
+    else {
 
         let p = dex.find(q)[0];
         if (p) {
@@ -80,6 +117,7 @@ app.get('/dex/:q', function (req, res) {
         }
     }
 
+    //format me
     if (out.indexOf('/me') === 0) {
         out = '/me ' + PREFIX + out.substring(3);
     }
@@ -106,7 +144,7 @@ function limit(str, max) {
 }
 
 
-function printPokemon(p, maxlen) {
+function printPokemon(p, maxlen, options) {
 
     const ABREV = {
         "hp": "HP",
@@ -119,20 +157,25 @@ function printPokemon(p, maxlen) {
 
     const name = `【#${p.national_id} ${p.names.en.toUpperCase()}】`;
     const type = unifont('TYPE:', 'sansbold') + p.types.join('/');
-    const abilities = unifont('ABILITIES:', 'sansbold') + p.abilities.map(a => a.name + (p.hidden ? '*' : '')).join(', ');
-    const base_stats = unifont('BASE:', 'sansbold') + Object.keys(p.base_stats).map(a => `${unifont(ABREV[a], 'normal')}${p.base_stats[a]}`).join('|');
-    const ev_yield = unifont('EVYIELD:', 'sansbold') + Object.keys(p.ev_yield).map(a => `${unifont(ABREV[a], 'normal')}${p.ev_yield[a]}`).join('|');
+    const abilities = unifont('ABILITIES:', 'sansbold') + p.abilities.map(a => a.name + (a.hidden ? '*' : '')).join('/');
+    const base_stats = unifont('BASE:', 'sansbold') + Object.keys(p.base_stats).map(a => `${unifont(ABREV[a], 'normal')}${p.base_stats[a]}`).join(' ');
+    const ev_yield = unifont('EVYIELD:', 'sansbold') + Object.keys(p.ev_yield).map(a => `${unifont(ABREV[a], 'normal')}${p.ev_yield[a]}`).join(' ');
     // const link = `pokemondb.net/pokedex/${p.names.en.toLowerCase()}`;
     // const link = `pokemon.wikia.com/wiki/${p.names.en.toLowerCase()}`;
     const link = `bulbapedia.bulbagarden.net/wiki/${p.names.en.toLowerCase()}`;
     const dexGen = Object.keys(p.pokedex_entries).random();
-    const quote = unifont(`🗣‟${p.pokedex_entries[dexGen].en}„`, 'sansitalic');
+    const quote = unifont(`🗣"${p.pokedex_entries[dexGen].en}"`, 'sansitalic');
+
+    const evolutionsFrom = p.evolutions_from ? `FROM:${p.evolutions_from}` : '';
+    const evolutionsTo = 'TO:' + (p.evolutions.length ? p.evolutions.map(e => `${e.to} ${e.level?'Lvl:'+e.level:''} ${e.conditions?'Condition:'+e.conditions:''} ${e.items?'Item:'+e.items:''}`) : 'No Evolutions');
 
     const out = [
         name,
         type,
         abilities,
         base_stats,
+        evolutionsFrom,
+        evolutionsTo,
         // ev_yield,
         quote, // index: 4 (update the quoteIndex variable)
         link,
@@ -145,6 +188,33 @@ function printPokemon(p, maxlen) {
         if (overflow > 0) out[quoteIndex] = limit(out[quoteIndex], out[quoteIndex].length - overflow);
     }
 
+
+    return out.join(' ');
+}
+
+
+
+function printPokemonEvolutions(p, maxlen, options) {
+
+    const name = `【#${p.national_id} ${p.names.en.toUpperCase()}】`;
+    const type = unifont('TYPE:', 'sansbold') + p.types.join('/');
+
+    // const link = `pokemondb.net/pokedex/${p.names.en.toLowerCase()}`;
+    // const link = `pokemon.wikia.com/wiki/${p.names.en.toLowerCase()}`;
+    const link = `bulbapedia.bulbagarden.net/wiki/${p.names.en.toLowerCase()}`;
+
+    const evolutionsFrom = p.evolutions_from ? `EVOLVES FROM:${p.evolutions_from}` : '';
+    const evolutionsTo = 'EVOLVES TO:' + (p.evolutions.length ? p.evolutions.map(e => `${e.to} ${e.level ? 'Lvl:' + e.level : ''} ${e.conditions ? 'Condition:' + e.conditions : ''} ${e.items ? 'Item:' + e.items : ''}`) : 'No Evolutions');
+
+    const out = [
+        name,
+        type,
+        
+        evolutionsFrom,
+        evolutionsTo,
+
+        link,
+    ];
 
     return out.join(' ');
 }

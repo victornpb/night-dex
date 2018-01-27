@@ -48,7 +48,18 @@ class Dex {
     }
 
     findOne(filter) {
-        return db.pokemons.find(filter);
+        return this.db.pokemons.find(filter);
+    }
+
+    findByType(type) {
+        return this.db.pokemons.filter(p => {
+            return p.types.join(' ').toLowerCase().indexOf(type) > -1;
+        });
+    }
+    findByAbility(type) {
+        return this.db.pokemons.filter(p => {
+            return p.abilities.map(a=>a.name).join(' ').toLowerCase().indexOf(type) > -1;
+        });
     }
 
     suggestions(query) {
