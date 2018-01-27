@@ -1,4 +1,5 @@
 function unifont(str, style) {
+    return str; //disable
     if (style === 'normal') return str;
     
     const styles = {
