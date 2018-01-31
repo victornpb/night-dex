@@ -45,13 +45,13 @@ app.get('/dex', function (req, res) {
 
 app.get('/dex/help', function (req, res) {
     let out = '';
-    out += `${unifont('HELP', 'squared')}❓`;
-    out += ` ➤ ${unifont(CMD, 'sansbold')} to get a random Pokemon.`;
-    out += ` ➤ ${unifont(CMD + ' gengar', 'sansbold')} or ${unifont(CMD + ' 94', 'sansbold')} to see the Pokedex info about Gengar.`;
-    out += ` ➤ ${unifont(CMD + ' ability overgrow', 'sansbold')} or ${unifont(CMD + ' 94', 'sansbold')} to search pokemons with that ability.`;
-    out += ` ➤ ${unifont(CMD + ' type electric', 'sansbold')} or ${unifont(CMD + ' 94', 'sansbold')} to search pokemons with that type.`;
-    out += ` ➤ ${unifont(CMD + ' help', 'sansbold')} to see about this command.`;
-    out += ` ➤ ${unifont(CMD + ' about', 'sansbold')} get this help info.`;
+    out += ` ${unifont('HELP', 'squared')}❓`;
+    out += ` ➤ "${unifont(CMD, 'sansbold')}" to get a random Pokemon.`;
+    out += ` ➤ "${unifont(CMD + ' gengar', 'sansbold')}" or "${unifont(CMD + ' 94', 'sansbold')}" to see the Pokedex info about Gengar.`;
+    out += ` ➤ "${unifont(CMD + ' ability overgrow', 'sansbold')}" or "${unifont(CMD + ' 94', 'sansbold')}" to search pokemons with that ability.`;
+    out += ` ➤ "${unifont(CMD + ' type electric', 'sansbold')}" or "${unifont(CMD + ' 94', 'sansbold')}" to search pokemons with that type.`;
+    out += ` ➤ "${unifont(CMD + ' help', 'sansbold')}" to see about this command.`;
+    out += ` ➤ "${unifont(CMD + ' about', 'sansbold')}" get this help info.`;
 
     out = limit(PREFIX + out, MAXLEN);
 
@@ -105,6 +105,9 @@ app.get('/dex/:q', function (req, res) {
                 out += ` 🔮 But you can try ${suggestions.length > 1 ? 'one of these' : 'this one'}: `;
                 out += suggestions.map(p => `🔹${CMD} ${p.names.en}`).join(' ');
             }
+            else {
+                out += ` Use "${CMD} help" to learn how to use this command!`;
+            }
         }
     }
 
@@ -145,8 +148,10 @@ function printPokemon(p, maxlen, options) {
         "sp_def": "spDEF",
         "speed": "SPEED",
     };
+    
+    console.log(p.evolutions[0]);
 
-    const name = `【#${p.national_id} ${p.names.en.toUpperCase()}】`;
+    const name = ` #${p.national_id}【${p.names.en.toUpperCase()}】`;
     const type = unifont('TYPE:', 'sansbold') + p.types.join('/');
     const abilities = unifont('ABILITIES:', 'sansbold') + p.abilities.map(a => a.name + (a.hidden ? '*' : '')).join('/');
     const base_stats = unifont('BASE:', 'sansbold') + Object.keys(p.base_stats).map(a => `${unifont(ABREV[a], 'normal')}${p.base_stats[a]}`).join(' ');
@@ -157,8 +162,8 @@ function printPokemon(p, maxlen, options) {
     const dexGen = Object.keys(p.pokedex_entries).random();
     const quote = unifont(`🗣"${p.pokedex_entries[dexGen].en}"`, 'sansitalic');
 
-    const evolutionsFrom = p.evolutions_from ? `FROM:${p.evolutions_from}` : '';
-    const evolutionsTo = 'TO:' + (p.evolutions.length ? p.evolutions.map(e => `${e.to} ${e.level?'Lvl:'+e.level:''} ${e.conditions?'Condition:'+e.conditions:''} ${e.items?'Item:'+e.items:''}`) : 'No Evolutions');
+    const evolutionsFrom = p.evolution_from ? `FROM:${p.evolution_from}` : '';
+    const evolutionsTo = printEvolution(p);
 
     const out = [
         name,
@@ -183,29 +188,20 @@ function printPokemon(p, maxlen, options) {
     return out.join(' ');
 }
 
-
-
-function printPokemonEvolutions(p, maxlen, options) {
-
-    const name = `【#${p.national_id} ${p.names.en.toUpperCase()}】`;
-    const type = unifont('TYPE:', 'sansbold') + p.types.join('/');
-
-    // const link = `pokemondb.net/pokedex/${p.names.en.toLowerCase()}`;
-    // const link = `pokemon.wikia.com/wiki/${p.names.en.toLowerCase()}`;
-    const link = `bulbapedia.bulbagarden.net/wiki/${p.names.en.toLowerCase()}`;
-
-    const evolutionsFrom = p.evolutions_from ? `EVOLVES FROM:${p.evolutions_from}` : '';
-    const evolutionsTo = 'EVOLVES TO:' + (p.evolutions.length ? p.evolutions.map(e => `${e.to} ${e.level ? 'Lvl:' + e.level : ''} ${e.conditions ? 'Condition:' + e.conditions : ''} ${e.items ? 'Item:' + e.items : ''}`) : 'No Evolutions');
-
-    const out = [
-        name,
-        type,
-        
-        evolutionsFrom,
-        evolutionsTo,
-
-        link,
-    ];
-
-    return out.join(' ');
+function printEvolution(p) {
+    if (p.evolutions.length) {
+        return p.evolutions.map(e => {
+            var s = [];
+            if (e.to) s.push(`TO:${e.to}`);
+            if (e.level) s.push(`Lvl:${e.level}`);
+            if (e.conditions) s.push(`Conditions:${e.conditions}`);
+            if (e.level_up) s.push(`LvlUp:${e.level_up}`);
+            if (e.trade) s.push(`Trade:${e.trade}`);
+            if (e.happiness) s.push(`Happiness:${e.happiness}`);
+            if (e.hold_item) s.push(`HoldItem:${e.hold_item}`);
+            if (e.move_learned) s.push(`MoveLearned:${e.move_learned}`);
+            return s.join(' ');
+        }).join(' | ');
+    }
+    return 'TO: Dont Evolve';
 }
