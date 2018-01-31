@@ -57,8 +57,9 @@ class Dex {
         });
     }
     findByAbility(type) {
+        console.log(type);
         return this.db.pokemons.filter(p => {
-            return p.abilities.map(a=>a.name).join(' ').toLowerCase().indexOf(type) > -1;
+            return p.abilities.map(a=>a.name).join(' ').toLowerCase().match(new RegExp(type, 'i'));
         });
     }
 

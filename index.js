@@ -48,9 +48,12 @@ app.get('/dex/help', function (req, res) {
     out += `${unifont('HELP', 'squared')}❓`;
     out += ` ➤ ${unifont(CMD, 'sansbold')} to get a random Pokemon.`;
     out += ` ➤ ${unifont(CMD + ' gengar', 'sansbold')} or ${unifont(CMD + ' 94', 'sansbold')} to see the Pokedex info about Gengar.`;
-    out += ` ➤ ${unifont(CMD + ' about', 'sansbold')} to see about this command.`;
+    out += ` ➤ ${unifont(CMD + ' ability overgrow', 'sansbold')} or ${unifont(CMD + ' 94', 'sansbold')} to search pokemons with that ability.`;
+    out += ` ➤ ${unifont(CMD + ' type electric', 'sansbold')} or ${unifont(CMD + ' 94', 'sansbold')} to search pokemons with that type.`;
+    out += ` ➤ ${unifont(CMD + ' help', 'sansbold')} to see about this command.`;
+    out += ` ➤ ${unifont(CMD + ' about', 'sansbold')} get this help info.`;
 
-    out = lmit(PREFIX + out, MAXLEN);
+    out = limit(PREFIX + out, MAXLEN);
 
     res.set({
         'content-type': 'text/plain; charset=utf-8'
@@ -64,7 +67,7 @@ app.get('/dex/:q', function (req, res) {
 
     const QUERY_BY_TYPE = /^(types?) (.*)/;
     const QUERY_BY_ABILITY = /^(ability|abilities?) (.*)/;
-    const QUERY_EVOLUTION = /^(evolutions?) (.*)/;
+    // const QUERY_EVOLUTION = /^(evolutions?) (.*)/;
 
     let ee = eastereggs(q);
     if (ee) {
@@ -87,18 +90,6 @@ app.get('/dex/:q', function (req, res) {
         let results = dex.findByAbility(t);
         if (results.length)
             out += results.map(p => `#${p.national_id} ${p.names.en}`);
-        else
-            out += `No results!`;    
-    }
-    else if (QUERY_EVOLUTION.test(q)) {
-        let t = QUERY_EVOLUTION.exec(q)[2];
-
-        // out += ` "${t}": `;
-        let p = dex.find(t)[0];
-        if (p) {
-            out += p.evolutions.map(p => `#${p.national_id} ${p.names.en}`);
-            
-        }
         else
             out += `No results!`;    
     }
@@ -183,7 +174,7 @@ function printPokemon(p, maxlen, options) {
 
     //limit the quote length
     if (maxlen) {
-        const quoteIndex = 4;
+        const quoteIndex = 6;
         var overflow = out.join(' ').length - maxlen;
         if (overflow > 0) out[quoteIndex] = limit(out[quoteIndex], out[quoteIndex].length - overflow);
     }
