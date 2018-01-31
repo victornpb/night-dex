@@ -31,10 +31,9 @@ const MAXLEN = 400;
 app.get('/dex', function (req, res) {
     let out = "";
     // out += `Instruction: ${unifont(CMD + ' help', 'sansbold')}. `;
-    out += unifont(`🎲 RANDOM 🎲`, 'boldscript');
+    out += unifont(`🎲RANDOM🎲 `, 'boldscript');
     let p = dex.getRandom();
     out += printPokemon(p, MAXLEN-PREFIX.length-out.length);
-
     out = limit(PREFIX + out, MAXLEN);
 
     res.set({
@@ -48,11 +47,9 @@ app.get('/dex/help', function (req, res) {
     out += ` ${unifont('HELP', 'squared')}❓`;
     out += ` ➤ "${unifont(CMD, 'sansbold')}" to get a random Pokemon.`;
     out += ` ➤ "${unifont(CMD + ' gengar', 'sansbold')}" or "${unifont(CMD + ' 94', 'sansbold')}" to see the Pokedex info about Gengar.`;
-    out += ` ➤ "${unifont(CMD + ' ability overgrow', 'sansbold')}" or "${unifont(CMD + ' 94', 'sansbold')}" to search pokemons with that ability.`;
-    out += ` ➤ "${unifont(CMD + ' type electric', 'sansbold')}" or "${unifont(CMD + ' 94', 'sansbold')}" to search pokemons with that type.`;
-    out += ` ➤ "${unifont(CMD + ' help', 'sansbold')}" to see about this command.`;
-    out += ` ➤ "${unifont(CMD + ' about', 'sansbold')}" get this help info.`;
-
+    out += ` ➤ "${unifont(CMD + ' ability overgrow', 'sansbold')}" to search pokemons with that ability.`;
+    out += ` ➤ "${unifont(CMD + ' type electric', 'sansbold')}" to search pokemons with that type.`;
+    out += ` ➤ "${unifont(CMD + ' about', 'sansbold')}" to see about this command.`;
     out = limit(PREFIX + out, MAXLEN);
 
     res.set({
@@ -128,7 +125,6 @@ app.get('/dex/:q', function (req, res) {
 
 });
 
-
 function limit(str, max) {
     const ellipisis = '…'
     if (str.length > max) {
@@ -136,7 +132,6 @@ function limit(str, max) {
     }
     return str;
 }
-
 
 function printPokemon(p, maxlen, options) {
 
@@ -148,14 +143,12 @@ function printPokemon(p, maxlen, options) {
         "sp_def": "spDEF",
         "speed": "SPEED",
     };
-    
-    console.log(p.evolutions[0]);
 
-    const name = ` #${p.national_id}【${p.names.en.toUpperCase()}】`;
+    const name = `#${p.national_id}【${p.names.en.toUpperCase()}】`;
     const type = unifont('TYPE:', 'sansbold') + p.types.join('/');
-    const abilities = unifont('ABILITIES:', 'sansbold') + p.abilities.map(a => a.name + (a.hidden ? '*' : '')).join('/');
-    const base_stats = unifont('BASE:', 'sansbold') + Object.keys(p.base_stats).map(a => `${unifont(ABREV[a], 'normal')}${p.base_stats[a]}`).join(' ');
-    const ev_yield = unifont('EVYIELD:', 'sansbold') + Object.keys(p.ev_yield).map(a => `${unifont(ABREV[a], 'normal')}${p.ev_yield[a]}`).join(' ');
+    const abilities = unifont('ABIL:', 'sansbold') + p.abilities.map(a => a.name + (a.hidden ? '*' : '')).join('/');
+    const base_stats = unifont('BASE:', 'sansbold') + Object.keys(p.base_stats).map(a => `${unifont(ABREV[a], 'normal')} ${p.base_stats[a]}`).join('|');
+    const ev_yield = unifont('EVYIELD:', 'sansbold') + Object.keys(p.ev_yield).map(a => `${unifont(ABREV[a], 'normal')} ${p.ev_yield[a]}`).join('|');
     // const link = `pokemondb.net/pokedex/${p.names.en.toLowerCase()}`;
     // const link = `pokemon.wikia.com/wiki/${p.names.en.toLowerCase()}`;
     const link = `bulbapedia.bulbagarden.net/wiki/${p.names.en.toLowerCase()}`;
@@ -173,7 +166,7 @@ function printPokemon(p, maxlen, options) {
         evolutionsFrom,
         evolutionsTo,
         // ev_yield,
-        quote, // index: 4 (update the quoteIndex variable)
+        quote, // index: 6 (update the quoteIndex variable)
         link,
     ];
 
@@ -184,24 +177,23 @@ function printPokemon(p, maxlen, options) {
         if (overflow > 0) out[quoteIndex] = limit(out[quoteIndex], out[quoteIndex].length - overflow);
     }
 
-
     return out.join(' ');
 }
 
 function printEvolution(p) {
     if (p.evolutions.length) {
-        return p.evolutions.map(e => {
+        return 'EVOLUTION:'+p.evolutions.map(e => {
             var s = [];
-            if (e.to) s.push(`TO:${e.to}`);
+            if (e.to) s.push(`${e.to}`);
             if (e.level) s.push(`Lvl:${e.level}`);
-            if (e.conditions) s.push(`Conditions:${e.conditions}`);
+            if (e.conditions) s.push(`Cond:${e.conditions}`);
             if (e.level_up) s.push(`LvlUp:${e.level_up}`);
             if (e.trade) s.push(`Trade:${e.trade}`);
             if (e.happiness) s.push(`Happiness:${e.happiness}`);
             if (e.hold_item) s.push(`HoldItem:${e.hold_item}`);
             if (e.move_learned) s.push(`MoveLearned:${e.move_learned}`);
             return s.join(' ');
-        }).join(' | ');
+        }).join(',');
     }
-    return 'TO: Dont Evolve';
+    return 'EVOLUTION: none';
 }
