@@ -211,11 +211,15 @@ app.get('/hook', function (req, res) {
         'content-type': 'text/plain; charset=utf-8'
     });
 
+
+    var discordMsg = req.query.discord || 'USER sent: MSG';
+    discordMsg = discordMsg.replace('USER', req.query.user);
+    discordMsg = discordMsg.replace('MSG', req.query.msg);
   
     tiny.post({
         url: 'https://discordapp.com/api/webhooks/421728518527778819/Tt7uFIoD57EavO8QkTIxT1k_d8_LL7omCf1abuiqvZzQUs5xFiMJRcgbAuJZxYA6c1fC',
         data: {
-            "content": `Message from command: ${req.query.msg}`,
+            "content": discordMsg,
             "username": "User: "+req.query.user,
             // "avatar_url": "https://orig00.deviantart.net/06cf/f/2016/191/e/8/ash_ketchum_render_by_tzblacktd-da9k0wb.png",
             "wait": true,
@@ -223,11 +227,16 @@ app.get('/hook', function (req, res) {
     }, (err, data) => {
         if (err) {
             console.error(err);
-            res.send("Could not send msg to discord!");
+            res.send("Could not send message to discord! "+ err);
         }
         else {
             console.log(data);
-            res.send("Message sent to discord");
+
+            var twitchMsg = req.query.twitch || '@USER I got your message!';
+            twitchMsg = twitchMsg.replace('USER', req.query.user);
+            twitchMsg = twitchMsg.replace('MSG', req.query.msg);
+
+            res.send(twitchMsg);
         }
     });
 
