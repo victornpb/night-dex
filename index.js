@@ -244,7 +244,7 @@ String.prototype.format = function () {
 
 var tiny = require('tiny-json-http')
 
-app.get('/hook', function (req, res) {
+app.get('/hook-url', function (req, res) {
     console.log('/hook '+JSON.stringify(req.query));
 
     res.set({
@@ -277,7 +277,7 @@ app.get('/hook', function (req, res) {
 
 
 
-app.get('/hook2', function (req, res) {
+app.get('/hook', function (req, res) {
     console.log('/hook ' + JSON.stringify(req.query));
 
     res.set({
@@ -291,6 +291,7 @@ app.get('/hook2', function (req, res) {
     tiny.get({
         url: req.query.config_url,
     }, (err, data) => {
+        debugger
         if (err) {
             console.error(err);
             return res.send("Error! Could not get options JSON! (" + err + ")");
