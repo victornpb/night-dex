@@ -200,6 +200,10 @@ function printEvolution(p) {
 
 
 
+
+
+
+
 /**
     * formats a string replacing tokens with an argument list, array, objects, and nested objects. 
     * @args Can be a list of arguments, array or object
@@ -240,8 +244,9 @@ String.prototype.format = function () {
 
 var tiny = require('tiny-json-http')
 
-
 app.get('/hook', function (req, res) {
+    console.log('hook', req.query);
+
     res.set({
         'content-type': 'text/plain; charset=utf-8'
     });
@@ -264,8 +269,6 @@ app.get('/hook', function (req, res) {
             res.send("Could not send message to discord! "+ err);
         }
         else {
-            console.log(data);
-
             var twitchMsg = String(req.query.twitch_reply || '@{user} I got your message!').format(req.query);
             res.send(twitchMsg);
         }
