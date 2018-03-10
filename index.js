@@ -211,13 +211,12 @@ app.get('/hook', function (req, res) {
         'content-type': 'text/plain; charset=utf-8'
     });
 
-
     var discordMsg = req.query.discord || 'USER sent: MSG';
     discordMsg = discordMsg.replace('USER', req.query.user);
     discordMsg = discordMsg.replace('MSG', req.query.msg);
   
     tiny.post({
-        url: 'https://discordapp.com/api/webhooks/421728518527778819/Tt7uFIoD57EavO8QkTIxT1k_d8_LL7omCf1abuiqvZzQUs5xFiMJRcgbAuJZxYA6c1fC',
+        url: req.query.hook_url,
         data: {
             "content": discordMsg,
             "username": "User: "+req.query.user,
