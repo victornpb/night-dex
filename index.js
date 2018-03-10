@@ -301,15 +301,15 @@ app.get('/hook', function (req, res) {
                 var options = JSON.parse(data.body);
             }
             catch (err) {
-                return res.send("Error! Invalid JSON! (" + err + ")");
+                return res.send("Error! Invalid configuration JSON! (" + err + ")");
             }
 
             //validate msg
             if (!req.query.msg) {
                 console.log('empty message');
-                return res.send(options.twitch_reply_empty_msg || 'please set `twitch_reply_empty_msg` ');
+                return res.send(options.twitch_reply_empty_msg.format(req.query) || 'please set `twitch_reply_empty_msg` ');
             }
-            else if (options.msg_pattern ===undefined || new RegExp(options.msg_pattern).test(req.query.msg)) {
+            else if (options.msg_pattern === undefined || new RegExp(options.msg_pattern).test(req.query.msg)) {
 
                 tiny.post({
                     url: options.discord_webhook,
@@ -332,7 +332,7 @@ app.get('/hook', function (req, res) {
             }
             else {
                 console.log('invalid message');
-                return res.send(options.twitch_reply_invalid_msg || 'plase set `twitch_reply_invalid_msg`');
+                return res.send(options.twitch_reply_invalid_msg.format(req.query)|| 'plase set `twitch_reply_invalid_msg`');
             }
 
 
