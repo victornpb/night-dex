@@ -33,7 +33,7 @@ app.get('/dex', function (req, res) {
     // out += `Instruction: ${unifont(CMD + ' help', 'sansbold')}. `;
     out += unifont(`🎲RANDOM🎲 `, 'boldscript');
     let p = dex.getRandom();
-    out += printPokemon(p, MAXLEN-PREFIX.length-out.length);
+    out += printPokemon(p, MAXLEN - PREFIX.length - out.length);
     out = limit(PREFIX + out, MAXLEN);
 
     res.set({
@@ -78,7 +78,7 @@ app.get('/dex/:q', function (req, res) {
         if (results.length)
             out += results.map(p => `#${p.national_id} ${p.names.en}`);
         else
-            out += `No results!`;    
+            out += `No results!`;
     }
     else if (QUERY_BY_ABILITY.test(q)) {
         let t = QUERY_BY_ABILITY.exec(q)[2];
@@ -88,13 +88,13 @@ app.get('/dex/:q', function (req, res) {
         if (results.length)
             out += results.map(p => `#${p.national_id} ${p.names.en}`);
         else
-            out += `No results!`;    
+            out += `No results!`;
     }
     else {
 
         let p = dex.find(q)[0];
         if (p) {
-            out = printPokemon(p, MAXLEN-PREFIX.length);
+            out = printPokemon(p, MAXLEN - PREFIX.length);
         } else { //not found
             out = unifont(`🕵 This Pokemon is not on the database!`, 'sansbold') + ` (${q})`;
             let suggestions = dex.suggestions(q);
@@ -115,7 +115,7 @@ app.get('/dex/:q', function (req, res) {
     else {
         out = PREFIX + out;
     }
-        
+
     out = limit(out, MAXLEN);
 
     res.set({
@@ -182,7 +182,7 @@ function printPokemon(p, maxlen, options) {
 
 function printEvolution(p) {
     if (p.evolutions.length) {
-        return 'EVOLUTION:'+p.evolutions.map(e => {
+        return 'EVOLUTION:' + p.evolutions.map(e => {
             var s = [];
             if (e.to) s.push(`${e.to}`);
             if (e.level) s.push(`Lvl:${e.level}`);
@@ -245,7 +245,7 @@ String.prototype.format = function () {
 var tiny = require('tiny-json-http')
 
 app.get('/hook', function (req, res) {
-    console.log('hook', req.query);
+    console.log('hook', JSON.stringify(req.query));
 
     res.set({
         'content-type': 'text/plain; charset=utf-8'
@@ -258,15 +258,15 @@ app.get('/hook', function (req, res) {
     tiny.post({
         url: req.query.discord_webhook,
         data: {
-            "content": String(req.query.discord_msg || 'Twitch user: {user}').format(req.query),
-            "username": String(req.query.discord_user || '').format(req.query),
-            // "avatar_url": "https://orig00.deviantart.net/06cf/f/2016/191/e/8/ash_ketchum_render_by_tzblacktd-da9k0wb.png",
+            "username": String(req.query.discord_user || 'Twitch user: {user}).format(req.query),
+            "content": String(req.query.discord_msg || 'Please set `discord_msg` parameter!').format(req.query),
             "wait": true,
+            // "avatar_url": "https://orig00.deviantart.net/06cf/f/2016/191/e/8/ash_ketchum_render_by_tzblacktd-da9k0wb.png",
         }
     }, (err, data) => {
         if (err) {
             console.error(err);
-            res.send("Could not send message to discord! "+ err);
+            res.send("Error sending message to discord! (" + err + ")");
         }
         else {
             var twitchMsg = String(req.query.twitch_reply || '@{user} I got your message!').format(req.query);
