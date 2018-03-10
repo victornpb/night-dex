@@ -200,7 +200,42 @@ function printEvolution(p) {
 
 
 
+/**
+    * formats a string replacing tokens with an argument list, array, objects, and nested objects. 
+    * @args Can be a list of arguments, array or object
+    * 
+    * Usage:
+    * "hello {0} world {0}!".format("foo", "bar"); //"hello foo world bar"
+    * "hello {0} world {0}!".format(["foo", "bar"]); //"hello foo world bar"
+    * "hello {name} world {test}!".format({name: "foo", test: "bar"}); //"hello foo world bar"
+    * "hello {obj.name} world {obj.test[0]}!".format({obj:{name: "foo", test: ["bar"]}}); //"hello foo world bar"
+    * @author Victor B. https://gist.github.com/victornpb/5a9642b1d5f749695e14
+    */
+String.prototype.format = function () {
+    /**
+     * Access a deep value inside a object 
+     * Works by passing a path like "foo.bar", also works with nested arrays like "foo[0][1].baz"
+     * @author Victor B. https://gist.github.com/victornpb/4c7882c1b9d36292308e
+     */
+    function getDeepVal(obj, path) {
+        var path = path.split(/[\.\[\]]/);
+        for (var i = 0, l = path.length; i < l; i++) {
+            if (path[i] === "") continue;
+            obj = obj[path[i]];
+        };
+        return obj;
+    }
 
+    var str = this.toString();
+    if (!arguments.length)
+        return str;
+    var args = typeof arguments[0],
+        args = (("string" == args || "number" == args) ? arguments : arguments[0]);
+    str = str.replace(/\{([^\}]+)\}/g, function (m, key) {
+        return getDeepVal(args, key);
+    });
+    return str;
+}
 
 
 var tiny = require('tiny-json-http')
@@ -211,15 +246,15 @@ app.get('/hook', function (req, res) {
         'content-type': 'text/plain; charset=utf-8'
     });
 
-    var discordMsg = req.query.discord || 'USER sent: MSG';
-    discordMsg = discordMsg.replace('USER', req.query.user);
-    discordMsg = discordMsg.replace('MSG', req.query.msg);
-  
+    if (!String(req.query.discord_webhook).match(/^https:\/\/.*/)) {
+        return res.send("You need to specify a discord_webhook!");
+    }
+
     tiny.post({
-        url: req.query.hook_url,
+        url: req.query.discord_webhook,
         data: {
-            "content": discordMsg,
-            "username": "User: "+req.query.user,
+            "content": String(req.query.discord_msg || 'Twitch user: {user}').format(req.query),
+            "username": String(req.query.discord_user || '').format(req.query),
             // "avatar_url": "https://orig00.deviantart.net/06cf/f/2016/191/e/8/ash_ketchum_render_by_tzblacktd-da9k0wb.png",
             "wait": true,
         }
@@ -231,12 +266,8 @@ app.get('/hook', function (req, res) {
         else {
             console.log(data);
 
-            var twitchMsg = req.query.twitch || '@USER I got your message!';
-            twitchMsg = twitchMsg.replace('USER', req.query.user);
-            twitchMsg = twitchMsg.replace('MSG', req.query.msg);
-
+            var twitchMsg = String(req.query.twitch_reply || '@{user} I got your message!').format(req.query);
             res.send(twitchMsg);
         }
     });
-
 });
