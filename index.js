@@ -197,3 +197,38 @@ function printEvolution(p) {
     }
     return 'EVOLUTION: none';
 }
+
+
+
+
+
+
+var tiny = require('tiny-json-http')
+
+
+app.get('/hook', function (req, res) {
+    res.set({
+        'content-type': 'text/plain; charset=utf-8'
+    });
+
+  
+    tiny.post({
+        url: 'https://discordapp.com/api/webhooks/421728518527778819/Tt7uFIoD57EavO8QkTIxT1k_d8_LL7omCf1abuiqvZzQUs5xFiMJRcgbAuJZxYA6c1fC',
+        data: {
+            "content": `Message from command: ${req.query.msg}`,
+            "username": "User: "+req.query.user,
+            // "avatar_url": "https://orig00.deviantart.net/06cf/f/2016/191/e/8/ash_ketchum_render_by_tzblacktd-da9k0wb.png",
+            "wait": true,
+        }
+    }, (err, data) => {
+        if (err) {
+            console.error(err);
+            res.send("Could not send msg to discord!");
+        }
+        else {
+            console.log(data);
+            res.send("Message sent to discord");
+        }
+    });
+
+});
