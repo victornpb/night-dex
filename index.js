@@ -245,7 +245,7 @@ String.prototype.format = function () {
 var tiny = require('tiny-json-http')
 
 app.get('/hook', function (req, res) {
-    console.log('hook', JSON.stringify(req.query));
+    console.log('/hook '+JSON.stringify(req.query));
 
     res.set({
         'content-type': 'text/plain; charset=utf-8'
@@ -258,7 +258,7 @@ app.get('/hook', function (req, res) {
     tiny.post({
         url: req.query.discord_webhook,
         data: {
-            "username": String(req.query.discord_user || 'Twitch user: {user}).format(req.query),
+            "username": String(req.query.discord_user || 'Twitch user: {user}').format(req.query),
             "content": String(req.query.discord_msg || 'Please set `discord_msg` parameter!').format(req.query),
             "wait": true,
             // "avatar_url": "https://orig00.deviantart.net/06cf/f/2016/191/e/8/ash_ketchum_render_by_tzblacktd-da9k0wb.png",
