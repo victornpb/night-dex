@@ -348,9 +348,8 @@ app.get('/hook', function (req, res) {
 
 
 
-
-app.get('/hook3', function (req, res) {
-    console.log('/hook3 ' + JSON.stringify(req.query));
+app.get('/discord', function (req, res) {
+    console.log('/discord ' + JSON.stringify(req.query));
 
     function limit(str, max) {
         const ellipisis = '…'
@@ -367,17 +366,27 @@ app.get('/hook3', function (req, res) {
         'content-type': 'text/plain; charset=utf-8'
     });
 
-    if (!String(req.query.options).match(IS_URL_RE)) {
-        return res.send(limit("Error! You need to specify a valid url as an `options` parameter!", TWITCH_MAXLEN));
+
+    //validate ouput parameter
+    if (!req.query.output) {
+        return res.send(limit("Error! Please provide an 'output' parameter!", TWITCH_MAXLEN));
+    }
+    if (!String(req.query.output).match(IS_URL_RE)) {
+        return res.send(limit(`Error! The value of the 'output' parameter is not valid URL! (${req.query.output})`, TWITCH_MAXLEN));
     }
 
-    if (!String(req.query.webhook).match(IS_URL_RE)) {
-        return res.send(limit("Error! You need to specify a webhook URL!", TWITCH_MAXLEN));
+    //validate webhook parameter
+    if (!req.query.webhook) {
+        return res.send(limit("Error! Please provide an 'webhook' parameter!", TWITCH_MAXLEN));
     }
+    if (!String(req.query.webhook).match(IS_URL_RE)) {
+        return res.send(limit(`Error! The value of the 'webhook' parameter is not a valid URL! (${req.query.webhook})`, TWITCH_MAXLEN));
+    }
+
 
     //fetch options file
     tiny.get({
-        url: req.query.options,
+        url: req.query.output,
     }, (err, data) => {
 
         var options;
@@ -409,7 +418,7 @@ app.get('/hook3', function (req, res) {
                 tiny.post({
                     url: req.query.webhook,
                     data: {
-                        "username": limit(String(options.discord_user || 'Twitch user: {user}').format(req.query), 32),
+                        "username": limit(String(options.discord_user || 'User: {user}').format(req.query), 32),
                         "content": limit(String(options.discord_msg || 'Please provide a `discord_msg`').format(req.query), 2000),
                         "wait": true,
                         // "avatar_url": "https://orig00.deviantart.net/06cf/f/2016/191/e/8/ash_ketchum_render_by_tzblacktd-da9k0wb.png",
@@ -433,4 +442,3 @@ app.get('/hook3', function (req, res) {
         }
     });
 });
-
