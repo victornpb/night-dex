@@ -222,21 +222,23 @@ String.prototype.format = function () {
      * @author Victor B. https://gist.github.com/victornpb/4c7882c1b9d36292308e
      */
     function getDeepVal(obj, path) {
-        var path = path.split(/[\.\[\]]/);
+        if (typeof obj === "undefined" || obj === null) return;
+        path = path.split(/[\.\[\]\"\']{1,2}/);
         for (var i = 0, l = path.length; i < l; i++) {
             if (path[i] === "") continue;
             obj = obj[path[i]];
-        };
+            if (typeof obj === "undefined" || obj === null) return;
+        }
         return obj;
     }
 
-    var str = this.toString();
+    var str = this;
     if (!arguments.length)
         return str;
     var args = typeof arguments[0],
         args = (("string" == args || "number" == args) ? arguments : arguments[0]);
     str = str.replace(/\{([^\}]+)\}/g, function (m, key) {
-        return getDeepVal(args, key);
+        return getDeepVal(args, key) || "";
     });
     return str;
 }
