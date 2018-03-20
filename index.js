@@ -380,13 +380,15 @@ app.get('/hook3', function (req, res) {
         url: req.query.options,
     }, (err, data) => {
 
+        var options;
+
         if (err) {
             console.error(err, req.query);
             return res.send(limit("ERROR! Request to 'options' url failed! (" + err + ")", TWITCH_MAXLEN));
         } else {
 
             try {
-                const options = JSON.parse(data.body);
+                options = JSON.parse(data.body);
             } catch (err) {
                 return res.send(limit("ERROR! 'options' url contain an invalid JSON! (" + err + ")", TWITCH_MAXLEN));
             }
@@ -431,3 +433,4 @@ app.get('/hook3', function (req, res) {
         }
     });
 });
+
