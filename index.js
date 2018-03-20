@@ -344,3 +344,90 @@ app.get('/hook', function (req, res) {
     });
 
 });
+
+
+
+
+
+app.get('/hook3', function (req, res) {
+    console.log('/hook3 ' + JSON.stringify(req.query));
+
+    function limit(str, max) {
+        const ellipisis = '…'
+        if (str.length > max) {
+            return str.substring(0, max - ellipisis.length) + ellipisis;
+        }
+        return str;
+    }
+
+    const TWITCH_MAXLEN = 400;
+    const IS_URL_RE = /^https?:\/\/.*/;
+
+    res.set({
+        'content-type': 'text/plain; charset=utf-8'
+    });
+
+    if (!String(req.query.options).match(IS_URL_RE)) {
+        return res.send(limit("Error! You need to specify a valid url as an `options` parameter!", TWITCH_MAXLEN));
+    }
+
+    if (!String(req.query.webhook).match(IS_URL_RE)) {
+        return res.send(limit("Error! You need to specify a webhook URL!", TWITCH_MAXLEN));
+    }
+
+    //fetch options file
+    tiny.get({
+        url: req.query.options,
+    }, (err, data) => {
+
+        if (err) {
+            console.error(err, req.query);
+            return res.send(limit("ERROR! Request to 'options' url failed! (" + err + ")", TWITCH_MAXLEN));
+        } else {
+
+            try {
+                const options = JSON.parse(data.body);
+            } catch (err) {
+                return res.send(limit("ERROR! 'options' url contain an invalid JSON! (" + err + ")", TWITCH_MAXLEN));
+            }
+
+            //empty message
+            if (!req.query.msg || String(req.query.msg).trim() === '') {
+                return res.send(limit(String(options.twitch_reply_empty_msg || 'Please provide `twitch_reply_empty_msg`').format(req.query), TWITCH_MAXLEN));
+            }
+            //if theres a pattern validate msg using it
+            else if (!options.msg_pattern || new RegExp(options.msg_pattern).test(req.query.msg)) {
+
+                //run pattern and save matches on the match property, so it can be used on the reply template
+                if (options.msg_pattern) {
+                    req.query.match = new RegExp(options.msg_pattern).exec(req.query.msg) || {};
+                }
+
+                //Send the message to discord webhook
+                tiny.post({
+                    url: req.query.webhook,
+                    data: {
+                        "username": limit(String(options.discord_user || 'Twitch user: {user}').format(req.query), 32),
+                        "content": limit(String(options.discord_msg || 'Please provide a `discord_msg`').format(req.query), 2000),
+                        "wait": true,
+                        // "avatar_url": "https://orig00.deviantart.net/06cf/f/2016/191/e/8/ash_ketchum_render_by_tzblacktd-da9k0wb.png",
+                    }
+                }, (err, data) => {
+                    if (err) {
+                        console.error(err, req.query);
+                        res.send(limit("Discord API returned an error! (" + err + ")", TWITCH_MAXLEN));
+                    } else {
+                        var twitchMsg = limit(String(options.twitch_reply || 'Please provide `twitch_reply`').format(req.query), TWITCH_MAXLEN);
+                        res.send(twitchMsg);
+                    }
+                });
+
+            }
+            //message does not match pattern    
+            else {
+                return res.send(limit(String(options.twitch_reply_invalid_msg || 'Please provide `twitch_reply_invalid_msg`').format(req.query), TWITCH_MAXLEN));
+            }
+
+        }
+    });
+});
