@@ -351,6 +351,50 @@ app.get('/hook', function (req, res) {
 app.get('/discord', function (req, res) {
     console.log('/discord ' + JSON.stringify(req.query));
 
+    if (Object.keys(req.query).length === 0) {
+        res.set({
+            'content-type': 'text/html; charset=utf-8'
+        });
+        return res.send(`
+<style>
+    #cmd {
+        border: 1px solid silver;
+        padding: 1em;
+        font: 12px monospace;
+        word-wrap: break-word;
+    }
+
+    var {
+        color: red;
+    }
+</style>
+<p>
+    <h4>Command:</h4>
+    <div id="cmd">
+        $(urlfetch http://victornightbot.herokuapp.com/discord?channel=$(channel)&count=$(count)&user=$(user)&level=$(userlevel)&msg=$(querystring)&webhook=<var>https://discordapp.com/api/webhooks/XXXXX/XXXXX</var>&output=<var>https://pastebin.com/raw/XXXXXXXX</var>)
+    </div>
+</p>
+
+<p>
+    <h4>Output example</h4>
+    <pre>
+{
+    "msg_pattern": "^(?:FC:?)?\\s*([0-9]{4})\\s*[-_,. ]\\s*?([0-9]{4})\\s*[-_,. ]\\s*([0-9]{4})\\s+(?:IGN:?)?\\s*(\\w{3,25})\\s*$",
+
+    "discord_user": "{user} ({level})",
+    "discord_msg": "*Has signed up to battle Film!*\n\`\`\`FC: { match.1 } - { match.2 } - { match.3 }\tIGN: { match.4 }\`\`\`",
+    
+    "twitch_reply": "Be prepared @{user}! You're the trainer number {count} for today's battle Film. Check your turn on Discord by typing !dc",
+    "twitch_reply_invalid_msg": "Hey {user}, looks like you typed something wrong. Use the following pattern !signup 0000-0000-0000 InGameName",
+    "twitch_reply_empty_msg": "Hey {user}, to enter the battle queue type your FC and IGN like !signup 0000-0000-0000 InGameName"
+}
+  </pre>
+</p>
+        `);
+    }
+
+
+
     function limit(str, max) {
         const ellipisis = '…'
         if (str.length > max) {
@@ -442,3 +486,7 @@ app.get('/discord', function (req, res) {
         }
     });
 });
+
+
+
+
