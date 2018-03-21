@@ -246,108 +246,6 @@ String.prototype.format = function () {
 
 var tiny = require('tiny-json-http')
 
-app.get('/hook-url', function (req, res) {
-    console.log('/hook '+JSON.stringify(req.query));
-
-    res.set({
-        'content-type': 'text/plain; charset=utf-8'
-    });
-
-    if (!String(req.query.discord_webhook).match(/^https:\/\/.*/)) {
-        return res.send("You need to specify a discord_webhook!");
-    }
-
-    tiny.post({
-        url: req.query.discord_webhook,
-        data: {
-            "username": String(req.query.discord_user || 'Twitch user: {user}').format(req.query),
-            "content": String(req.query.discord_msg || 'Please set `discord_msg` parameter!').format(req.query),
-            "wait": true,
-            // "avatar_url": "https://orig00.deviantart.net/06cf/f/2016/191/e/8/ash_ketchum_render_by_tzblacktd-da9k0wb.png",
-        }
-    }, (err, data) => {
-        if (err) {
-            console.error(err);
-            res.send("Error sending message to discord! (" + err + ")");
-        }
-        else {
-            var twitchMsg = String(req.query.twitch_reply || '@{user} I got your message!').format(req.query);
-            res.send(twitchMsg);
-        }
-    });
-});
-
-
-
-app.get('/hook', function (req, res) {
-    console.log('/hook ' + JSON.stringify(req.query));
-
-    res.set({
-        'content-type': 'text/plain; charset=utf-8'
-    });
-
-    if (!String(req.query.config_url).match(/^https:\/\/.*/)) {
-        return res.send("Error! You need to specify config_url!");
-    }
-
-    tiny.get({
-        url: req.query.config_url,
-    }, (err, data) => {
-        debugger
-        if (err) {
-            console.error(err);
-            return res.send("Error! Could not get options JSON! (" + err + ")");
-        }
-        else {
-            try {
-                var options = JSON.parse(data.body);
-            }
-            catch (err) {
-                return res.send("Error! Invalid configuration JSON! (" + err + ")");
-            }
-
-            //validate msg
-            if (!req.query.msg) {
-                console.log('empty message');
-                return res.send(options.twitch_reply_empty_msg.format(req.query) || 'please set `twitch_reply_empty_msg` ');
-            }
-            else if (options.msg_pattern === undefined || new RegExp(options.msg_pattern).test(req.query.msg)) {
-
-                tiny.post({
-                    url: options.discord_webhook,
-                    data: {
-                        "username": String(options.discord_user || 'Twitch user: {user}').format(req.query),
-                        "content": String(options.discord_msg || 'Please set `discord_msg` parameter!').format(req.query),
-                        "wait": true,
-                        // "avatar_url": "https://orig00.deviantart.net/06cf/f/2016/191/e/8/ash_ketchum_render_by_tzblacktd-da9k0wb.png",
-                    }
-                }, (err, data) => {
-                    if (err) {
-                        console.error(err);
-                        res.send("Error sending message to discord! (" + err + ")");
-                    }
-                    else {
-                        var twitchMsg = String(options.twitch_reply || '@{user} I got your message!').format(req.query);
-                        res.send(twitchMsg);
-                    }
-                });
-            }
-            else {
-                console.log('invalid message');
-                return res.send(options.twitch_reply_invalid_msg.format(req.query)|| 'plase set `twitch_reply_invalid_msg`');
-            }
-
-
-            
-            
-        }
-    });
-
-});
-
-
-
-
 app.get('/discord', function (req, res) {
     console.log('/discord ' + JSON.stringify(req.query));
 
@@ -392,7 +290,6 @@ app.get('/discord', function (req, res) {
 </p>
         `);
     }
-
 
 
     function limit(str, max) {
