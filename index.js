@@ -293,7 +293,7 @@ app.get('/discord', function (req, res) {
 
 
     function limit(str, max) {
-        const ellipisis = '…'
+        const ellipisis = '...';
         if (str.length > max) {
             return str.substring(0, max - ellipisis.length) + ellipisis;
         }
