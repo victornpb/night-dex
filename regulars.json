@@ -17,7 +17,7 @@
         "RAMEN Kappu Kappu Kappu 🍜",
         "GLOWING HOT POCKETS!"
     ],
-    "C00lFireSG": [
+    "coolfire": [
         "❄️🔥SG",
         "This is a kind of pokemon that have the ability to repel Growlithe",
         "This pokedéx cannot find any Shiny Charmander!",
@@ -28,9 +28,7 @@
         "This is a very wise kind of pokemon who can tell stories about people dying in unexpected ways...",
         "Did you mean: !dex HootHoot",
         "Fantasy Owl is a secret evolution of Noctowl",
-        "Fantasy Owl is a pokemon which likes stinky feet",
-        "This pokemon secretely kill people in a book",
-        "This pokemon might just be Gone!"
+        "This pokemon secretely kill people in a book"
     ],
     "SupuhSel": [
         "This pokemon is very fast, sometimes it can reach speeds of 80 miles per hour!",
@@ -44,5 +42,11 @@
         "Do they have any pokemons in Jupiter?",
         "Pokedex cannot find any record of pokemons in Jupiter",
         "Pokemon Jupiter is a Pokemon Ruby hack which has been developed since July of 2008."
+    ],
+    "skinny_meat_yeet":[
+        "Did you mean Kimberly Soul?"
+    ],
+    "MommaMooTwo":[
+        "This pokemon is stronger than MewTwo but it also repels Shiny Rayquaza"
     ]
 }
