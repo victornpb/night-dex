@@ -25,7 +25,7 @@ app.listen(PORT, () => console.log(`Listening on ${PORT}`));
 const dex = new Dex(); //instance
 
 const CMD = '!dex';
-const PREFIX = unifont('📟 DEX ', 'squaredneg');
+const PREFIX = unifont('📟 ', 'squaredneg');
 const MAXLEN = 400;
 
 app.get('/dex', function (req, res) {
@@ -144,7 +144,7 @@ function printPokemon(p, maxlen, options) {
         "speed": "SPEED",
     };
 
-    const name = `#${p.national_id}【${p.names.en.toUpperCase()}】`;
+    const name = `${p.names.en.toUpperCase()} #${p.national_id}`;
     const type = unifont('TYPE:', 'sansbold') + p.types.join('/');
     const abilities = unifont('ABIL:', 'sansbold') + p.abilities.map(a => a.name + (a.hidden ? '*' : '')).join('/');
     const base_stats = unifont('BASE:', 'sansbold') + Object.keys(p.base_stats).map(a => `${unifont(ABREV[a], 'normal')} ${p.base_stats[a]}`).join('|');
