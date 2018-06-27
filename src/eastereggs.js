@@ -3,11 +3,6 @@ const fs = require('fs');
 
 const regulars = JSON.parse(fs.readFileSync(path.join(__dirname, 'regulars.json')));
 
-
-module.exports = function (q) {
-    return testCredits(q) || testRegulars(q);
-};
-
 function testRegulars(str) {
     const q = String(str).toLowerCase().replace('@','');
 
@@ -18,8 +13,6 @@ function testRegulars(str) {
     if (person) return `🎁【@${person}】 ${regulars[person].random()}`;
 }
 
-
-
 function testCredits(str) {
     const q = String(str).toLowerCase().trim().replace('@','');
     
@@ -29,3 +22,8 @@ function testCredits(str) {
         ].random();
     }
 }
+
+
+module.exports = function (q) {
+    return testCredits(q) || testRegulars(q);
+};

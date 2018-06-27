@@ -10,7 +10,7 @@ class Dex {
     }
     load() {
         console.log('Loading database to memory');
-        const dexdir = path.join(__dirname, 'node_modules/oakdex-pokedex/data/pokemon');
+        const dexdir = path.join(__dirname, '../node_modules/oakdex-pokedex/data/pokemon');
 
         var files = fs.readdirSync(dexdir);
         console.log(`found ${files.length} files`);
