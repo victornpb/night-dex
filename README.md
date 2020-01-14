@@ -2,7 +2,7 @@
 
 #### Hosted command
 
-Add the !dex command:
+Add the `!dex` command to [Nightbot](https://nightbot.tv/commands/custom):
 ```
 $(urlfetch https://victornightbot.herokuapp.com/dex/$(querystring))
 ```
