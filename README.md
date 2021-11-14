@@ -1,13 +1,20 @@
-# A Pokedex command for Nightbot twitch streams
+# A Pokedéx command for Pokémon Twitch Streamers
 
-#### Hosted command
 
-Add the `!dex` command to [Nightbot](https://nightbot.tv/commands/custom):
+## Nightbot
+Add the `!dex` command at https://nightbot.tv/commands/custom
 ```
 $(urlfetch https://victornightbot.herokuapp.com/dex/$(querystring))
 ```
 
-# Usage
+## StreamElements
+Add the `!dex` command at https://streamelements.com/dashboard/bot/commands/custom
+```
+${urlfetch https://victornightbot.herokuapp.com/dex/$(pathescape $(0:))}
+```
+
+Usage
+------------
 
   ➤ `!dex help` to get instructions.  
   ➤ `!dex` to get a random Pokemon.  
