@@ -15,7 +15,7 @@ Array.prototype.random = function () {
 };
 
 const app = express();
-app.listen(PORT, () => console.log(`Listening on ${PORT}`));
+app.listen(PORT, () => console.log(`Listening on http://localhost:${PORT}`));
 
 // app.use(express.static(path.join(__dirname, 'public')))
 // app.set('views', path.join(__dirname, 'views'))
@@ -62,6 +62,7 @@ app.get('/dex/:q', function (req, res) {
     let out = '';
     var q = String(req.params.q).trim();
     if (q.match(/^!\w+ ?/)) q = q.replace(/^!\w+ ?/, ''); // remove !dex prefix if present because streamelements includes it
+    if (q.trim()==='') return res.redirect('/dex');
 
     const QUERY_BY_TYPE = /^(types?) (.*)/;
     const QUERY_BY_ABILITY = /^(ability|abilities?) (.*)/;
