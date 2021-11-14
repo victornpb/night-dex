@@ -61,6 +61,7 @@ app.get('/dex/help', function (req, res) {
 app.get('/dex/:q', function (req, res) {
     let out = '';
     var q = String(req.params.q).trim();
+    if (q.match(/^!\w+ /)) q = q.replace(/^!\w+ /, ''); // remove !dex prefix if present because streamelements includes it
 
     const QUERY_BY_TYPE = /^(types?) (.*)/;
     const QUERY_BY_ABILITY = /^(ability|abilities?) (.*)/;
