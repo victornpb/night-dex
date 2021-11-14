@@ -37,7 +37,7 @@
         "This pokemon is very kind and generous",
         "This pokemon sometimes needs to be translated to be understood by its own peers"
     ],
-    "jupiternova18":[
+    "jupiternova18": [
         "Jupiter favorite planet is Mars",
         "Do you know that you can watch Fairy Tail on Jupiter?",
         "Is Jupiter a pokemon or a planet? I'm not sure",
@@ -45,10 +45,20 @@
         "Pokedex cannot find any record of pokemons in Jupiter",
         "Pokemon Jupiter is a Pokemon Ruby hack which has been developed since July of 2008."
     ],
-    "skinny_meat_yeet":[
+    "skinny_meat_yeet": [
         "Did you mean Kimberly Soul?"
     ],
-    "MommaMooTwo":[
+    "MommaMooTwo": [
         "This pokemon is stronger than MewTwo but it also repels Shiny Rayquaza"
+    ],
+    "zanestaley": [
+        "This pokemon is onipresent",
+        "Zane knows a lot about pokemon, you might be impressed, but I'm not, I'm a bot after all... LUL",
+        "Did you mean Rowlet?! Kappa"
+    ],
+    "didiluvvz": [
+        "Ghost time!",
+        "Its your Cap'n",
+        "Dodo"
     ]
 }
