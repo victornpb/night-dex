@@ -10,7 +10,7 @@ $(urlfetch https://victornightbot.herokuapp.com/dex/$(querystring))
 ## StreamElements
 Add the `!dex` command at https://streamelements.com/dashboard/bot/commands/custom
 ```
-${urlfetch https://victornightbot.herokuapp.com/dex/$(pathescape $(0:))}
+${urlfetch https://victornightbot.herokuapp.com/dex/${pathescape ${0:}}}
 ```
 
 Usage
