@@ -2,6 +2,14 @@
 
 
 ## Nightbot
+
+Type this in chat:
+```
+!commands add !dex $(urlfetch https://victornightbot.herokuapp.com/dex/$(querystring)?ch=$(channel)&user=$(user)&userlevel=$(userlevel)&bot=nightbot)
+```
+
+or
+
 Add the `!dex` command at https://nightbot.tv/commands/custom
 ```
 $(urlfetch https://victornightbot.herokuapp.com/dex/$(querystring)?ch=$(channel)&user=$(user)&userlevel=$(userlevel)&bot=nightbot)
