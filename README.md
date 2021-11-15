@@ -4,13 +4,13 @@
 ## Nightbot
 Add the `!dex` command at https://nightbot.tv/commands/custom
 ```
-$(urlfetch https://victornightbot.herokuapp.com/dex/$(querystring))
+$(urlfetch https://victornightbot.herokuapp.com/dex/$(querystring)?ch=$(channel)&user=$(user)&userlevel=$(userlevel)&bot=nightbot)
 ```
 
 ## StreamElements
 Add the `!dex` command at https://streamelements.com/dashboard/bot/commands/custom
 ```
-${urlfetch https://victornightbot.herokuapp.com/dex/${pathescape ${0:}}}
+${urlfetch https://victornightbot.herokuapp.com/dex/${pathescape ${0:}}?ch=${channel}&user=${user}&userlevel=${user.level}&bot=streamelements}
 ```
 
 Usage
